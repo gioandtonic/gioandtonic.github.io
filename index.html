@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Going Like Locals - Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-deep-teal': '#0D4747',
+                        'primary-off-white': '#F7F9FA',
+                        'secondary-teal-light': '#527C7C',
+                        'secondary-teal-pale': '#DDE7E7',
+                        'accent-amber': '#B08D57', // For hidden gems, special highlights
+                        'success-green': '#2E7D32',
+                        'error-red': '#C62828',
+                        'warning-yellow': '#FF8F00', // For low availability alerts
+                        'neutral-dark-gray': '#333333',
+                        'neutral-medium-gray': '#757575',
+                        'neutral-light-gray': '#BDBDBD',
+                        'background-content': '#FFFFFF', // For cards, modals
+                        // Dark Mode (Conceptual, not fully implemented in this prototype)
+                        'dark-bg-primary': '#1A202C',
+                        'dark-surface': '#2C3543',
+                        'dark-primary-teal': '#389A9A',
+                        'dark-accent-amber': '#C8A573',
+                        'dark-text-primary': '#EAEAEA',
+                        'dark-text-secondary': '#A0AEC0',
+                        'dark-border': '#4A5568',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        tighter: '-0.05em',
+                        tight: '-0.025em',
+                        normal: '0',
+                        wide: '0.025em',
+                        wider: '0.05em',
+                        widest: '0.1em',
+                    },
+                    boxShadow: {
+                        'subtle': '0 2px 8px rgba(0,0,0,0.06)',
+                        'card': '0 4px 12px -2px rgba(0,0,0,0.08)',
+                        'interactive': '0 0 0 3px rgba(13, 71, 71, 0.2)', // For focus rings
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #E0E0E0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+            color: #333333; /* neutral-dark-gray */
+        }
+        .iphone-frame {
+            width: 390px;
+            height: 844px;
+            background-color: #1C1C1E;
+            border-radius: 50px;
+            padding: 16px;
+            box-shadow: 0px 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .iphone-screen {
+            background-color: #F7F9FA; /* primary-off-white */
+            width: 100%;
+            height: 100%;
+            border-radius: 34px;
+            overflow: hidden; /* Main screen doesn't scroll, content inside does */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .iphone-notch-container {
+            height: 30px;
+            width: 180px;
+            background-color: #1C1C1E;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            margin: 0 auto;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+        }
+        .screen-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-top: 40px; /* Account for notch */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .screen-content::-webkit-scrollbar {
+            display: none; /* WebKit browsers */
+        }
+        .bottom-nav {
+            border-top: 1px solid #DDE7E7; /* secondary-teal-pale */
+            background-color: #FFFFFF; /* background-content */
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px; /* Standard nav height */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 4px 0;
+            cursor: pointer;
+            color: #757575; /* neutral-medium-gray */
+            transition: color 0.2s ease-in-out;
+        }
+        .nav-item.active, .nav-item:hover {
+            color: #0D4747; /* primary-deep-teal */
+        }
+        .nav-item svg {
+            margin-bottom: 2px;
+        }
+        .nav-item span {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        /* Component-specific styles */
+        .category-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--tw-shadow-card);
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px -4px rgba(0,0,0,0.1);
+        }
+        .experience-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--tw-shadow-card);
+            margin-bottom: 16px;
+        }
+        .experience-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .hidden-gem-badge {
+            background-color: var(--tw-color-accent-amber);
+            color: var(--tw-color-primary-off-white);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-primary {
+            background-color: #0D4747; /* primary-deep-teal */
+            color: #F7F9FA; /* primary-off-white */
+            height: 50px;
+            border-radius: 10px;
+            padding: 0 20px;
+            font-weight: 500;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--tw-shadow-subtle);
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0A3A3A; /* Darker teal */
+        }
+        .btn-secondary {
+            border: 1.5px solid #0D4747;
+            color: #0D4747;
+            background-color: transparent;
+            height: 50px;
+            border-radius: 10px;
+            padding: 0 20px;
+            font-weight: 500;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #DDE7E7; /* secondary-teal-pale */
+        }
+        .input-field {
+            width: 100%;
+            height: 56px;
+            padding: 0 16px;
+            border-radius: 10px;
+            border: 1px solid #BDBDBD; /* neutral-light-gray */
+            background-color: #FFFFFF; /* background-content */
+            color: #333333; /* neutral-dark-gray */
+            font-size: 16px;
+        }
+        .input-field:focus {
+            border-color: #0D4747; /* primary-deep-teal */
+            box-shadow: var(--tw-shadow-interactive);
+            outline: none;
+        }
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* For back button and title */
+            padding: 12px 16px;
+            padding-top: 45px; /* Extra padding for notch */
+            background-color: #F7F9FA;
+            border-bottom: 1px solid #DDE7E7;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            min-height: 60px; /* Ensure it has height */
+        }
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0D4747;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .header-back-button {
+             color: #0D4747;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="module">
+        import React, { useState, useEffect, createContext, useContext } from 'https://esm.sh/react@18.2.0';
+        import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
+        import * as Lucide from 'https://esm.sh/lucide-react@0.378.0'; // Updated to a recent version
+
+        const AppContext = createContext();
+
+        const initialExperiences = [
+            { id: 1, title: "Autentica Clase de Cocina Andina", category: "Gastronomia", price: "75 USD", rating: 4.8, image: "https://placehold.co/600x400/0D4747/FFF?text=Gastronomia", location: "La Candelaria, Bogotá", isHiddenGem: true, availability: "High", host: { name: "Chef Maria", verified: true, experience: "10 years", avatar: "https://placehold.co/100x100/527C7C/FFF?text=MH" }, description: "Aprende a cocinar platos Colombianos tradicionales en una histórica casa colonial. Incluye una visita a un mercado local.", requirements: "Tennis cómodos, apetito!", interested: 120, attended: 450 },
+            { id: 2, title: "Caminata en el Parque Nacional Chingaza", category: "Naturaleza", price: "120 USD", rating: 4.9, image: "https://placehold.co/600x400/2E7D32/FFF?text=Nature", location: "Cerca a Bogotá", isHiddenGem: false, availability: "Medium", host: { name: "Andes Adventures", verified: true, experience: "15 años", avatar: "https://placehold.co/100x100/527C7C/FFF?text=AA" }, description: "Explora el único ecosistema de páramo, hogar de frailejones y espectaculares osos andinos. Caminata guiada de un día completo.", requirements: "Buen estado físico, ropa cómoda y caliente.", interested: 250, attended: 800 },
+            { id: 3, title: "Bogotá Street Art & Graffiti Tour", category: "Arte y Cultura", price: "30 USD", rating: 4.7, image: "https://placehold.co/600x400/B08D57/FFF?text=Arte", location: "Varios vecindarios de Bogotá", isHiddenGem: false, availability: "Alta", host: { name: "Urban Canvas Collective", verified: false, experience: "5 años", avatar: "https://placehold.co/100x100/527C7C/FFF?text=UC" }, description: "Descubre las historias vibrantes detrás del famoso arte callejero Bogotano. Liderado por artistas locales.", requirements: "Tennis para caminar.", interested: 180, attended: 600 },
+            { id: 4, title: "Experiencia Cafetera de Lujo", category: "Turismo de Lujo", price: "350 USD", rating: 5.0, image: "https://placehold.co/600x400/000000/FFF?text=Luxury", location: "Zona Cafetera (requiere viajar)", isHiddenGem: true, availability: "Baja", host: { name: "Hacienda El Paraiso", verified: true, experience: "20 años", avatar: "https://placehold.co/100x100/527C7C/FFF?text=HP" }, description: "Tour privado a una bella y tradicional hacienda cafetera, cata gourmet, y servicio personalizado.", requirements: "Reserva Anticipada", interested: 80, attended: 150 },
+            { id: 5, title: "Paragliding sobre Suesca", category: "Aventura", price: "90 USD", rating: 4.6, image: "https://placehold.co/600x400/FF8F00/000?text=Aventura", location: "Suesca, Cundinamarca", isHiddenGem: false, availability: "Media", host: { name: "Sky High Adventures", verified: true, experience: "8 años", avatar: "https://placehold.co/100x100/527C7C/FFF?text=SH" }, description: "Experimenta la emoción de paragliding en tandem con vistas impresionantes de las rocas de Suesca.", requirements: "Peso Límite 100kg.", interested: 300, attended: 950 },
+            { id: 6, title: "Mambe Ancestral & Storytelling", category: "Bienestar y Sanación", price: "50 USD", rating: 4.9, image: "https://placehold.co/600x400/527C7C/FFF?text=Bienestar", location: "Reserva Indigena (guiado)", isHiddenGem: true, availability: "Media", host: { name: "Taita Miguel", verified: true, experience: "30+ años", avatar: "https://placehold.co/100x100/527C7C/FFF?text=TM" }, description: "Participa en un tradicional mambeadero (círculo de palabra alrededor de la hoja de coca) y escucha historias ancestrales.", requirements: "Vestimenta respetuosa, mente abierta.", interested: 90, attended: 200 },
+        ];
+        
+        const categories = [
+            { name: "Gastronomia", icon: Lucide.ChefHat, color: "bg-red-500" },
+            { name: "Deportes", icon: Lucide.Bike, color: "bg-blue-500" },
+            { name: "Naturaleza", icon: Lucide.Sprout, color: "bg-green-500" },
+            { name: "Bienestar", icon: Lucide.HeartHandshake, color: "bg-purple-500" },
+            { name: "Arte & Cultura", icon: Lucide.Palette, color: "bg-yellow-500" },
+            { name: "Lujo", icon: Lucide.Gem, color: "bg-gray-700" },
+            { name: "Aventura", icon: Lucide.MountainSnow, color: "bg-orange-500" },
+            { name: "Joyas Ocultas", icon: Lucide.Sparkles, color: "bg-accent-amber" },
+        ];
+
+        // --- Components ---
+
+        const Header = ({ title, onBack }) => (
+            React.createElement('div', { className: 'header-bar fixed top-0 left-0 right-0 w-full max-w-[390px] mx-auto bg-primary-off-white z-10' },
+                onBack && React.createElement('button', { onClick: onBack, className: 'header-back-button p-2 -ml-2' },
+                    React.createElement(Lucide.ChevronLeft, { size: 28 })
+                ),
+                React.createElement('h1', { className: `header-title ${onBack ? 'pr-8' : ''}` }, title),
+                !onBack && React.createElement('div', { className: 'w-8' }) // Placeholder for balance if no back button
+            )
+        );
+        
+        const BottomNav = ({ activePage, navigate }) => {
+            const navItems = [
+                { name: "Descubre", icon: Lucide.Compass, page: "home" },
+                { name: "Buscar", icon: Lucide.Search, page: "search" },
+                { name: "Reservas", icon: Lucide.CalendarCheck, page: "bookings" },
+                { name: "Chat", icon: Lucide.MessageCircle, page: "chatlist" },
+                { name: "Perfil", icon: Lucide.UserCircle2, page: "profile" },
+            ];
+            return (
+                React.createElement('nav', { className: 'bottom-nav' },
+                    navItems.map(item => (
+                        React.createElement('div', { 
+                            key: item.name, 
+                            className: `nav-item ${activePage === item.page ? 'active' : ''}`,
+                            onClick: () => navigate(item.page)
+                        },
+                            React.createElement(item.icon, { size: 24 }),
+                            React.createElement('span', null, item.name)
+                        )
+                    ))
+                )
+            );
+        };
+
+        const CategoryCard = ({ category, navigate }) => (
+            React.createElement('div', { 
+                className: 'category-card flex flex-col items-center justify-center cursor-pointer',
+                onClick: () => navigate('category', { categoryName: category.name })
+            },
+                React.createElement(category.icon, { size: 36, className: `mb-2 ${category.name === "Joyas Ocultas" ? 'text-accent-amber' : 'text-primary-deep-teal'}` }),
+                React.createElement('p', { className: 'font-semibold text-sm text-neutral-dark-gray' }, category.name)
+            )
+        );
+
+        const ExperienceCard = ({ experience, navigate }) => (
+            React.createElement('div', { 
+                className: 'experience-card cursor-pointer',
+                onClick: () => navigate('experienceDetail', { experienceId: experience.id })
+            },
+                React.createElement('div', {className: 'relative'},
+                    React.createElement('img', { src: experience.image, alt: experience.title, onError: (e) => e.target.src = 'https://placehold.co/600x400/cccccc/969696?text=Image+Not+Found' }),
+                    experience.isHiddenGem && React.createElement('div', { className: 'hidden-gem-badge absolute top-2 left-2' }, 
+                        React.createElement(Lucide.Sparkles, { size: 12, className: 'mr-1' }),
+                        "Joya Oculta"
+                    ),
+                    experience.availability === "Low" && React.createElement('div', { className: 'absolute top-2 right-2 bg-warning-yellow text-white text-xs font-semibold px-2 py-1 rounded' }, "Baja Disponibilidad!")
+                ),
+                React.createElement('div', { className: 'p-4' },
+                    React.createElement('h3', { className: 'text-lg font-semibold text-neutral-dark-gray mb-1 truncate' }, experience.title),
+                    React.createElement('p', { className: 'text-sm text-neutral-medium-gray mb-1' }, experience.category),
+                    React.createElement('div', { className: 'flex items-center justify-between text-sm' },
+                        React.createElement('p', { className: 'text-primary-deep-teal font-semibold' }, experience.price),
+                        React.createElement('div', { className: 'flex items-center' },
+                            React.createElement(Lucide.Star, { size: 16, className: 'text-accent-amber fill-accent-amber mr-1' }),
+                            React.createElement('span', { className: 'text-neutral-dark-gray font-medium' }, experience.rating)
+                        )
+                    )
+                )
+            )
+        );
+
+        const HomeScreen = ({ navigate }) => {
+            const { experiences } = useContext(AppContext);
+            const featuredExperiences = experiences.slice(0, 3);
+            const hiddenGems = experiences.filter(exp => exp.isHiddenGem).slice(0,2);
+
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', { className: 'p-4 pt-0' }, // Adjusted padding for content under fixed header
+                        React.createElement('h2', { className: 'text-xl font-bold text-primary-deep-teal mb-1' }, "Bienvenido, Viajero!"),
+                        React.createElement('p', { className: 'text-neutral-medium-gray text-sm mb-4' }, "Descubre experiencias locales únicas.")
+                    ),
+                    
+                    React.createElement('div', { className: 'px-4 mb-6' },
+                         React.createElement('div', {className: 'relative'},
+                            React.createElement('input', { type: 'text', placeholder: 'Buscar experiencias (e.g. cocina, caminatas)', className: 'input-field pl-10 w-full', onClick: () => navigate('search')}),
+                            React.createElement(Lucide.Search, {size: 20, className: 'absolute left-3 top-1/2 -translate-y-1/2 text-neutral-medium-gray'})
+                        )
+                    ),
+
+                    React.createElement('h3', { className: 'text-lg font-semibold text-primary-deep-teal mb-3 px-4' }, "Categorias"),
+                    React.createElement('div', { className: 'grid grid-cols-2 sm:grid-cols-4 gap-3 px-4 mb-6' },
+                        categories.map(cat => React.createElement(CategoryCard, { key: cat.name, category: cat, navigate: navigate }))
+                    ),
+                    
+                    React.createElement('h3', { className: 'text-lg font-semibold text-primary-deep-teal mb-3 px-4' }, "Featured Experiences"),
+                    React.createElement('div', { className: 'px-4 space-y-4 mb-6' },
+                        featuredExperiences.map(exp => React.createElement(ExperienceCard, { key: exp.id, experience: exp, navigate: navigate }))
+                    ),
+
+                    React.createElement('h3', { className: 'text-lg font-semibold text-primary-deep-teal mb-3 px-4 flex items-center' }, 
+                        React.createElement(Lucide.Sparkles, { size: 20, className: 'mr-2 text-accent-amber' }),
+                        "Nuestras Joyas Ocultas"
+                    ),
+                    React.createElement('div', { className: 'px-4 space-y-4' },
+                        hiddenGems.map(exp => React.createElement(ExperienceCard, { key: exp.id, experience: exp, navigate: navigate })),
+                        React.createElement('button', { className: 'text-primary-deep-teal font-medium text-sm hover:underline w-full text-left mt-2', onClick: () => navigate('category', { categoryName: 'Joyas Ocultas' }) }, "Descubre nuestras Joyas Ocultas...")
+                    )
+                )
+            );
+        };
+        
+        const CategoryScreen = ({ navigate, params }) => {
+            const { experiences } = useContext(AppContext);
+            const categoryName = params.categoryName;
+            const categoryExperiences = categoryName === "joyas Ocultas" 
+                ? experiences.filter(exp => exp.isHiddenGem)
+                : experiences.filter(exp => exp.category === categoryName);
+
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('h2', { className: 'text-xl font-bold text-primary-deep-teal mb-4 px-4' }, categoryName),
+                    React.createElement('div', { className: 'px-4 space-y-4' },
+                        categoryExperiences.length > 0 
+                            ? categoryExperiences.map(exp => React.createElement(ExperienceCard, { key: exp.id, experience: exp, navigate: navigate }))
+                            : React.createElement('p', {className: 'text-neutral-medium-gray'}, `Sin experiencias found in ${categoryName} yet.`)
+                    )
+                )
+            );
+        };
+
+        const SearchScreen = ({ navigate }) => {
+            const { experiences } = useContext(AppContext);
+            const [searchTerm, setSearchTerm] = useState("");
+            const [results, setResults] = useState([]);
+            const [showFilters, setShowFilters] = useState(false);
+            const [appliedFilters, setAppliedFilters] = useState({
+                category: "",
+                priceRange: "",
+                rating: 0
+            });
+
+            useEffect(() => {
+                if (searchTerm.trim() === "" && appliedFilters.category === "" && appliedFilters.priceRange === "" && appliedFilters.rating === 0) {
+                    setResults([]); // Show nothing or suggestions if no search/filter
+                    return;
+                }
+                let filtered = experiences;
+                if (searchTerm.trim() !== "") {
+                    filtered = filtered.filter(exp => exp.title.toLowerCase().includes(searchTerm.toLowerCase()) || exp.description.toLowerCase().includes(searchTerm.toLowerCase()));
+                }
+                if (appliedFilters.category) {
+                    filtered = filtered.filter(exp => exp.category === appliedFilters.category);
+                }
+                // Add more filter logic for priceRange and rating if needed
+                setResults(filtered);
+            }, [searchTerm, experiences, appliedFilters]);
+
+            const handleFilterChange = (filterName, value) => {
+                setAppliedFilters(prev => ({...prev, [filterName]: value}));
+            };
+
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', { className: 'px-4 mb-4 flex items-center gap-2' },
+                        React.createElement('input', { 
+                            type: 'text', 
+                            placeholder: 'Buscar experiencias...', 
+                            className: 'input-field flex-grow',
+                            value: searchTerm,
+                            onChange: (e) => setSearchTerm(e.target.value)
+                        }),
+                        React.createElement('button', { 
+                            onClick: () => setShowFilters(!showFilters),
+                            className: 'p-3 rounded-lg bg-secondary-teal-pale text-primary-deep-teal hover:bg-opacity-80'
+                        }, React.createElement(Lucide.SlidersHorizontal, {size: 24}))
+                    ),
+                    
+                    showFilters && React.createElement('div', {className: 'px-4 mb-4 p-4 bg-background-content rounded-lg shadow-card space-y-3'},
+                        React.createElement('h4', {className: 'text-md font-semibold text-primary-deep-teal'}, "Filters"),
+                        React.createElement('div', null,
+                            React.createElement('label', {className: 'text-sm text-neutral-medium-gray block mb-1'}, "Categoria"),
+                            React.createElement('select', {
+                                className: 'input-field',
+                                value: appliedFilters.category,
+                                onChange: e => handleFilterChange('category', e.target.value)
+                            },
+                                React.createElement('option', {value: ""}, "Todas las Categorías"),
+                                categories.map(cat => React.createElement('option', {key: cat.name, value: cat.name}, cat.name))
+                            )
+                        ),
+                        // Add more filter inputs for price, rating etc.
+                        React.createElement('button', {onClick: () => setShowFilters(false), className: 'btn-primary w-full mt-2'}, "Applicar Filtros")
+                    ),
+
+                    React.createElement('div', { className: 'px-4 space-y-4' },
+                        results.length > 0 
+                            ? results.map(exp => React.createElement(ExperienceCard, { key: exp.id, experience: exp, navigate: navigate }))
+                            : searchTerm && React.createElement('p', {className: 'text-neutral-medium-gray text-center py-8'}, `No hay resultados para "${searchTerm}". Intenta un término diferente.`)
+                    )
+                )
+            );
+        };
+        
+        const ExperienceDetailScreen = ({ navigate, params }) => {
+            const { experiences, setCurrentBooking } = useContext(AppContext);
+            const experience = experiences.find(exp => exp.id === params.experienceId);
+
+            if (!experience) return React.createElement('p', {className: 'text-center p-8'}, "Experiencia no encontrada.");
+
+            const handleBookNow = () => {
+                setCurrentBooking({ experienceId: experience.id, step: 1, date: null, guests: 1 });
+                navigate('booking');
+            };
+            
+            return (
+                React.createElement('div', { className: 'pb-16' }, // Padding bottom for sticky button
+                    React.createElement('img', { src: experience.image, alt: experience.title, className: 'w-full h-60 object-cover', onError: (e) => e.target.src = 'https://placehold.co/600x400/cccccc/969696?text=Image+Not+Found' }),
+                    
+                    experience.availability === "Low" && React.createElement('div', { className: 'bg-warning-yellow text-white text-sm font-semibold p-3 text-center flex items-center justify-center' }, 
+                        React.createElement(Lucide.AlertTriangle, {size: 18, className: 'mr-2'}),
+                        "Popular! Baja disponibilidad, reserva pronto."
+                    ),
+
+                    React.createElement('div', { className: 'p-4' },
+                        React.createElement('div', {className: 'flex justify-between items-start mb-2'},
+                            React.createElement('h2', { className: 'text-2xl font-bold text-primary-deep-teal leading-tight' }, experience.title),
+                            experience.isHiddenGem && React.createElement('div', { className: 'hidden-gem-badge mt-1' }, 
+                                React.createElement(Lucide.Sparkles, { size: 14, className: 'mr-1' }),
+                                "Joya Oculta"
+                            )
+                        ),
+                        React.createElement('p', { className: 'text-neutral-medium-gray mb-1' }, experience.category),
+                        React.createElement('div', { className: 'flex items-center text-neutral-dark-gray mb-3' },
+                            React.createElement(Lucide.MapPin, { size: 16, className: 'mr-2 text-secondary-teal-light' }),
+                            React.createElement('span', null, experience.location)
+                        ),
+                        React.createElement('div', { className: 'flex items-center justify-between mb-4' },
+                            React.createElement('p', { className: 'text-2xl font-bold text-primary-deep-teal' }, experience.price),
+                            React.createElement('div', { className: 'flex items-center' },
+                                React.createElement(Lucide.Star, { size: 20, className: 'text-accent-amber fill-accent-amber mr-1' }),
+                                React.createElement('span', { className: 'text-lg text-neutral-dark-gray font-semibold' }, experience.rating),
+                                React.createElement('span', { className: 'text-sm text-neutral-medium-gray ml-1' }, "(100+ reviews)") // Placeholder
+                            )
+                        ),
+                        
+                        React.createElement('div', {className: 'flex space-x-4 mb-4 text-sm text-neutral-medium-gray'},
+                            React.createElement('div', {className: 'flex items-center'}, React.createElement(Lucide.Users, {size: 16, className: 'mr-1 text-secondary-teal-light'}), `${experience.interested} Interesado`),
+                            React.createElement('div', {className: 'flex items-center'}, React.createElement(Lucide.CheckCircle, {size: 16, className: 'mr-1 text-secondary-teal-light'}), `${experience.attended} Terminada`)
+                        ),
+
+                        React.createElement('h3', { className: 'text-md font-semibold text-primary-deep-teal mb-1' }, "Acerca de esta experiencia"),
+                        React.createElement('p', { className: 'text-neutral-dark-gray mb-3 text-sm leading-relaxed' }, experience.description),
+                        React.createElement('h3', { className: 'text-md font-semibold text-primary-deep-teal mb-1' }, "Requisitos"),
+                        React.createElement('p', { className: 'text-neutral-dark-gray mb-4 text-sm' }, experience.requirements),
+
+                        React.createElement('div', { className: 'p-3 bg-secondary-teal-pale rounded-lg mb-4 cursor-pointer', onClick: () => navigate('hostProfile', { hostName: experience.host.name }) },
+                            React.createElement('h3', { className: 'text-md font-semibold text-primary-deep-teal mb-2' }, "Conoce tu anfitrión"),
+                            React.createElement('div', { className: 'flex items-center' },
+                                React.createElement('img', { src: experience.host.avatar, alt: experience.host.name, className: 'w-12 h-12 rounded-full mr-3', onError: (e) => e.target.src = 'https://placehold.co/100x100/cccccc/969696?text=Anfitrión' }),
+                                React.createElement('div', null,
+                                    React.createElement('p', { className: 'font-semibold text-neutral-dark-gray' }, experience.host.name),
+                                    experience.host.verified && React.createElement('div', {className: 'flex items-center text-xs text-success-green'}, React.createElement(Lucide.ShieldCheck, {size: 14, className: 'mr-1'}), "Anfitrión Verificado")
+                                )
+                            )
+                        ),
+                        
+                        React.createElement('div', {className: 'my-4 h-40 bg-neutral-light-gray rounded-lg flex items-center justify-center text-neutral-medium-gray text-sm'},
+                            React.createElement(Lucide.Map, {size: 24, className: 'mr-2'}),
+                            "Map Placeholder (e.g., Google Maps)"
+                        ),
+                        React.createElement('p', {className: 'text-xs text-neutral-medium-gray text-center hover:underline cursor-pointer', onClick: () => alert("Ver Política de Cancelación")}, "Ver Política de Cancelación")
+                    ),
+                    React.createElement('div', { className: 'fixed bottom-[60px] left-0 right-0 p-4 bg-background-content border-t border-secondary-teal-pale w-full max-w-[390px] mx-auto' }, // Accommodate bottom nav
+                        React.createElement('button', { onClick: handleBookNow, className: 'btn-primary w-full' }, "Book Now")
+                    )
+                )
+            );
+        };
+
+        const BookingScreen = ({ navigate }) => {
+            const { currentBooking, setCurrentBooking, experiences } = useContext(AppContext);
+            if (!currentBooking || !currentBooking.experienceId) {
+                navigate('home'); // Should not happen
+                return null;
+            }
+            const experience = experiences.find(exp => exp.id === currentBooking.experienceId);
+
+            const nextStep = () => setCurrentBooking(prev => ({ ...prev, step: prev.step + 1 }));
+            const prevStep = () => setCurrentBooking(prev => ({ ...prev, step: prev.step - 1 }));
+            const updateBookingDetails = (field, value) => setCurrentBooking(prev => ({ ...prev, [field]: value }));
+
+            const handleSubmitBooking = () => {
+                alert(`Reserva para ${experience.title} enviada! (Simulado) \nFecha: ${currentBooking.date}, Viajeros: ${currentBooking.guests}\nEl pago será procesado de forma segura. Check para 2FA.`);
+                setCurrentBooking(null);
+                navigate('bookings');
+            };
+            
+            const renderStep = () => {
+                switch (currentBooking.step) {
+                    case 1: // Review Details
+                        return React.createElement('div', {className: 'p-4'},
+                            React.createElement('h3', {className: 'text-lg font-semibold text-primary-deep-teal mb-2'}, "Paso 1: Revisa tu Experiencia"),
+                            React.createElement('div', {className: 'p-3 bg-secondary-teal-pale rounded-lg mb-4'},
+                                React.createElement('h4', {className: 'font-semibold text-neutral-dark-gray'}, experience.title),
+                                React.createElement('p', {className: 'text-sm text-neutral-medium-gray'}, experience.category),
+                                React.createElement('p', {className: 'text-lg font-bold text-primary-deep-teal mt-1'}, experience.price)
+                            ),
+                            React.createElement('p', {className: 'text-sm text-neutral-dark-gray mb-1'}, React.createElement('strong', null, "Descripción:") ,` ${experience.description.substring(0,100)}...`),
+                            React.createElement('p', {className: 'text-sm text-neutral-dark-gray mb-3'}, React.createElement('strong', null, "Requisitos:") ,` ${experience.requirements}`),
+                            React.createElement('button', { onClick: nextStep, className: 'btn-primary w-full' }, "Confirma Detalles & Continua")
+                        );
+                    case 2: // Date & Guests
+                        return React.createElement('div', {className: 'p-4 space-y-4'},
+                            React.createElement('h3', {className: 'text-lg font-semibold text-primary-deep-teal mb-2'}, "Paso 2: Selecciona Fecha y Viajeros"),
+                            React.createElement('div', null,
+                                React.createElement('label', {className: 'block text-sm font-medium text-neutral-dark-gray mb-1'}, "Selecciona Fecha"),
+                                React.createElement('input', {type: 'date', className: 'input-field', value: currentBooking.date || '', onChange: e => updateBookingDetails('date', e.target.value) })
+                            ),
+                            React.createElement('div', {className: 'h-40 bg-neutral-light-gray rounded-lg flex items-center justify-center text-neutral-medium-gray text-sm'}, "Interactive Calendar Placeholder"),
+                            React.createElement('div', null,
+                                React.createElement('label', {className: 'block text-sm font-medium text-neutral-dark-gray mb-1'}, "Numero de Viajeros"),
+                                React.createElement('input', {type: 'number', min: '1', max: '10', className: 'input-field', value: currentBooking.guests, onChange: e => updateBookingDetails('guests', parseInt(e.target.value))})
+                            ),
+                            React.createElement('div', {className: 'flex gap-3 mt-4'},
+                                React.createElement('button', { onClick: prevStep, className: 'btn-secondary flex-1' }, "Atras"),
+                                React.createElement('button', { onClick: nextStep, className: 'btn-primary flex-1', disabled: !currentBooking.date || currentBooking.guests < 1 }, "Continua a Pago")
+                            )
+                        );
+                    case 3: // Payment & Confirmation
+                        return React.createElement('div', {className: 'p-4 space-y-4'},
+                            React.createElement('h3', {className: 'text-lg font-semibold text-primary-deep-teal mb-2'}, "Step 3: Confirmación & Pago"),
+                            React.createElement('div', {className: 'p-3 bg-secondary-teal-pale rounded-lg mb-2'},
+                                React.createElement('p', {className: 'text-sm'}, React.createElement('strong', null, "Experiencia: "), experience.title),
+                                React.createElement('p', {className: 'text-sm'}, React.createElement('strong', null, "Fecha: "), currentBooking.date),
+                                React.createElement('p', {className: 'text-sm'}, React.createElement('strong', null, "Viajeros: "), currentBooking.guests),
+                                React.createElement('p', {className: 'text-md font-bold mt-1'}, React.createElement('strong', null, "Total: "), experience.price) // Simplified total
+                            ),
+                            React.createElement('input', {type: 'text', placeholder: 'Nombre Completo', className: 'input-field'}),
+                            React.createElement('input', {type: 'email', placeholder: 'Email', className: 'input-field'}),
+                            React.createElement('div', {className: 'p-3 border border-neutral-light-gray rounded-lg'},
+                                React.createElement('p', {className: 'text-sm font-medium text-neutral-dark-gray mb-2'}, "Seleccionar Metodo de Pago"),
+                                React.createElement('div', {className: 'flex space-x-2 items-center mb-2'}, 
+                                    React.createElement('img', {src: 'https://placehold.co/50x30/0D4747/FFF?text=Visa', className: 'h-6 rounded-sm'}),
+                                    React.createElement('img', {src: 'https://placehold.co/50x30/0D4747/FFF?text=MC', className: 'h-6 rounded-sm'}),
+                                    React.createElement('img', {src: 'https://placehold.co/50x30/0D4747/FFF?text=PSE', className: 'h-6 rounded-sm'})
+                                ),
+                                React.createElement('p', {className: 'text-xs text-neutral-medium-gray'}, "Proceso de Pago Seguro.")
+                            ),
+                            React.createElement('div', {className: 'flex items-center text-sm text-neutral-medium-gray space-x-2 my-2'},
+                                React.createElement(Lucide.ShieldCheck, {size: 18, className: 'text-success-green'}),
+                                React.createElement('span', null, "2FA Habilitado"),
+                                React.createElement(Lucide.Fingerprint, {size: 18, className: 'text-primary-deep-teal'}),
+                                React.createElement('span', null, "Autenticación Biometrica Disponible")
+                            ),
+                            React.createElement('button', {className: 'btn-secondary w-full text-sm mb-2'}, "Reservar con estos Detalles"),
+                            React.createElement('div', {className: 'flex gap-3 mt-2'},
+                                React.createElement('button', { onClick: prevStep, className: 'btn-secondary flex-1' }, "Atrás"),
+                                React.createElement('button', { onClick: handleSubmitBooking, className: 'btn-primary flex-1' }, "Confirmación & Pago")
+                            )
+                        );
+                    default: return null;
+                }
+            };
+            
+            return React.createElement('div', { className: 'pb-4' }, renderStep());
+        };
+
+        const BookingsScreen = ({ navigate }) => {
+            // Placeholder for actual booking data
+            const userBookings = [
+                { id: 'bk123', experienceTitle: "Clase de Cocina Autentica Andina", date: "2024-07-15", status: "Confirmado" },
+                { id: 'bk456', experienceTitle: "Caminata al Parque NacionalChingaza", date: "2024-08-02", status: "Pendiente de Detalles" },
+            ];
+
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', { className: 'px-4 space-y-3' },
+                        userBookings.length > 0 ? userBookings.map(booking => 
+                            React.createElement('div', {key: booking.id, className: 'p-4 bg-background-content rounded-lg shadow-card'},
+                                React.createElement('h3', {className: 'font-semibold text-neutral-dark-gray'}, booking.experienceTitle),
+                                React.createElement('p', {className: 'text-sm text-neutral-medium-gray'}, `Date: ${booking.date}`),
+                                React.createElement('p', {className: `text-sm font-medium ${booking.status === 'Confirmado' ? 'text-success-green' : 'text-warning-yellow'}`}, `Estado: ${booking.status}`)
+                            )
+                        ) : React.createElement('p', {className: 'text-neutral-medium-gray text-center py-8'}, "No tienes reservas activas.")
+                    )
+                )
+            );
+        };
+
+        const ChatListScreen = ({ navigate }) => {
+            const chats = [
+                { id: 1, name: "Chef Maria (Clase de Cocina)", lastMessage: "Sí, podemos tener en cuenta restricciones dietarias!", unread: 2, avatar: "https://placehold.co/100x100/527C7C/FFF?text=MH" },
+                { id: 2, name: "Andes Adventures (Caminata Chingaza)", lastMessage: "Excelente! Te veremos el Sábado.", unread: 0, avatar: "https://placehold.co/100x100/527C7C/FFF?text=AA" },
+                { id: 3, name: "GoingLikeLocals Soporte", lastMessage: "Tu solicitud ha sido actualizada.", unread: 0, avatar: "https://placehold.co/100x100/0D4747/FFF?text=GLL" },
+            ];
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', { className: 'px-4 space-y-2' },
+                        chats.map(chat => (
+                            React.createElement('div', { 
+                                key: chat.id, 
+                                className: 'flex items-center p-3 bg-background-content rounded-lg shadow-card cursor-pointer hover:bg-secondary-teal-pale/30',
+                                onClick: () => navigate('chat', { chatId: chat.id, chatName: chat.name })
+                            },
+                                React.createElement('img', { src: chat.avatar, alt: chat.name, className: 'w-12 h-12 rounded-full mr-3' }),
+                                React.createElement('div', { className: 'flex-grow' },
+                                    React.createElement('p', { className: 'font-semibold text-neutral-dark-gray' }, chat.name),
+                                    React.createElement('p', { className: 'text-sm text-neutral-medium-gray truncate' }, chat.lastMessage)
+                                ),
+                                chat.unread > 0 && React.createElement('span', { className: 'bg-primary-deep-teal text-primary-off-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ml-2' }, chat.unread)
+                            )
+                        ))
+                    )
+                )
+            );
+        };
+
+        const ChatScreen = ({ navigate, params }) => {
+            const messages = [
+                { id: 1, sender: params.chatName, text: "Hola! Tienes alguna pregunta acerca de la clase de cocina?", time: "10:30 AM", isUser: false },
+                { id: 2, sender: "Tu", text: "Hola Maria, sí! Quisiera saber si tienes opciones veganas disponibles?", time: "10:32 AM", isUser: true },
+                { id: 3, sender: params.chatName, text: "Claro que sí! Podemos ajustarnos fácilmente a opciones veganas. Solo déjanos saber con anticipación.", time: "10:33 AM", isUser: false },
+            ];
+            const [newMessage, setNewMessage] = useState("");
+
+            const handleSend = () => {
+                if(newMessage.trim()) {
+                    // Simulate sending message
+                    alert(`Mensaje enviado a ${params.chatName}: ${newMessage}`);
+                    setNewMessage("");
+                }
+            };
+
+            return (
+                React.createElement('div', { className: 'flex flex-col h-full' },
+                    React.createElement('div', { className: 'flex-grow p-4 space-y-3 overflow-y-auto' },
+                        messages.map(msg => (
+                            React.createElement('div', { key: msg.id, className: `flex ${msg.isUser ? 'justify-end' : 'justify-start'}` },
+                                React.createElement('div', { className: `max-w-[70%] p-3 rounded-xl ${msg.isUser ? 'bg-primary-deep-teal text-primary-off-white' : 'bg-background-content shadow-subtle'}` },
+                                    React.createElement('p', { className: 'text-sm' }, msg.text),
+                                    React.createElement('p', { className: `text-xs mt-1 ${msg.isUser ? 'text-primary-off-white/70 text-right' : 'text-neutral-medium-gray text-left'}` }, msg.time)
+                                )
+                            )
+                        ))
+                    ),
+                    React.createElement('div', { className: 'p-3 border-t border-secondary-teal-pale bg-background-content flex items-center' },
+                        React.createElement('input', { 
+                            type: 'text', 
+                            placeholder: 'Escribe un mensaje...', 
+                            className: 'input-field flex-grow mr-2',
+                            value: newMessage,
+                            onChange: (e) => setNewMessage(e.target.value),
+                            onKeyPress: (e) => e.key === 'Enter' && handleSend()
+                        }),
+                        React.createElement('button', { onClick: handleSend, className: 'p-3 bg-primary-deep-teal text-primary-off-white rounded-lg' }, 
+                            React.createElement(Lucide.Send, { size: 20 })
+                        )
+                    )
+                )
+            );
+        };
+        
+        const HostProfileScreen = ({ navigate, params }) => {
+            // Find host from experiences based on name for demo
+            const { experiences } = useContext(AppContext);
+            const experienceWithHost = experiences.find(exp => exp.host.name === params.hostName);
+            const host = experienceWithHost ? experienceWithHost.host : { name: params.hostName || "Anfitrión", verified: true, experience: "N/A años", avatar: "https://placehold.co/100x100/cccccc/969696?text=Anfitrión" };
+
+            return (
+                 React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', {className: 'p-4 flex flex-col items-center text-center bg-secondary-teal-pale rounded-b-2xl mb-4 -mx-4 -mt-4 pt-8 pb-6'}, // Negative margin to extend color
+                        React.createElement('img', { src: host.avatar, alt: host.name, className: 'w-24 h-24 rounded-full mb-3 border-4 border-background-content shadow-lg' }),
+                        React.createElement('h2', { className: 'text-xl font-bold text-primary-deep-teal' }, host.name),
+                        host.verified && React.createElement('div', {className: 'flex items-center text-sm text-success-green mt-1 bg-background-content px-2 py-1 rounded-full shadow-sm'}, 
+                            React.createElement(Lucide.ShieldCheck, {size: 16, className: 'mr-1'}), 
+                            "Aliado Verificado"
+                        ),
+                        React.createElement('p', { className: 'text-sm text-neutral-medium-gray mt-1' }, `Experiencia: ${host.experience}`)
+                    ),
+                    React.createElement('div', {className: 'px-4 space-y-4'},
+                        React.createElement('div', {className: 'p-4 bg-background-content rounded-lg shadow-card'},
+                            React.createElement('h3', {className: 'text-md font-semibold text-primary-deep-teal mb-2'}, "Por qué confiar en nuestros aliados?"),
+                            React.createElement('p', {className: 'text-sm text-neutral-dark-gray leading-relaxed'}, "Nosotros verificamos y curamos nuestras experiencias y anfitriones para asegurar que cumplen altos estándares de calidad, seguridad y autenticidad. Nuestros aliados son apasionados locales con experiencia probada (min. 5 años) y un compromiso para proveer experiencias inolvidables.")
+                        ),
+                        React.createElement('div', {className: 'p-4 bg-background-content rounded-lg shadow-card'},
+                            React.createElement('h3', {className: 'text-md font-semibold text-primary-deep-teal mb-2'}, "Calificaciones & Reseñas"),
+                            React.createElement('div', {className: 'flex items-center mb-2'},
+                                [1,2,3,4,5].map(i => React.createElement(Lucide.Star, {key: i, size: 20, className: `mr-1 ${i <= 4 ? 'text-accent-amber fill-accent-amber' : 'text-neutral-light-gray'}`})),
+                                React.createElement('span', {className: 'ml-2 text-neutral-dark-gray font-medium'}, "4.9 (150+ Reseñas)")
+                            ),
+                            React.createElement('div', {className: 'text-sm text-neutral-dark-gray space-y-2'},
+                                React.createElement('p', null, React.createElement('strong', null, "Elena P.: "), "\"Absolutamente increible! Maria es muy conocedora y amigable.\""),
+                                React.createElement('p', null, React.createElement('strong', null, "John B.: "), "\"La mejor experiencia local que he tenido en Colombia. Altamente recomendado!\"")
+                            )
+                        ),
+                        React.createElement('div', {className: 'p-4 bg-background-content rounded-lg shadow-card'},
+                            React.createElement('h3', {className: 'text-md font-semibold text-primary-deep-teal mb-2'}, `Experiencias por ${host.name}`),
+                            // List a few experiences by this host - simplified for demo
+                            experiences.filter(e => e.host.name === host.name).slice(0,2).map(exp => 
+                                React.createElement('div', {key: exp.id, className: 'mb-2 pb-2 border-b border-secondary-teal-pale last:border-b-0 last:pb-0 cursor-pointer hover:bg-gray-50 p-1 rounded', onClick: () => navigate('experienceDetail', {experienceId: exp.id})},
+                                    React.createElement('p', {className: 'font-medium text-neutral-dark-gray text-sm'}, exp.title)
+                                )
+                            )
+                        )
+                    )
+                 )
+            );
+        };
+
+        const ProfileScreen = ({ navigate }) => {
+            // Placeholder for user data
+            const user = { name: "Alex Viajero", email: "alex.traveler@email.com", affinityScore: 75, avatar: "https://placehold.co/100x100/B08D57/FFF?text=AT" };
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', {className: 'p-4 flex items-center space-x-4 mb-4'},
+                        React.createElement('img', {src: user.avatar, alt: user.name, className: 'w-20 h-20 rounded-full border-2 border-primary-deep-teal'}),
+                        React.createElement('div', null,
+                            React.createElement('h2', {className: 'text-xl font-bold text-primary-deep-teal'}, user.name),
+                            React.createElement('p', {className: 'text-sm text-neutral-medium-gray'}, user.email)
+                        )
+                    ),
+                    React.createElement('div', {className: 'px-4 space-y-3'},
+                        React.createElement('div', {className: 'p-3 bg-background-content rounded-lg shadow-card flex justify-between items-center'},
+                            React.createElement('span', {className: 'text-neutral-dark-gray'}, "Afinidad del Viajero"),
+                            React.createElement('span', {className: 'font-bold text-lg text-accent-amber'}, `${user.affinityScore}%`)
+                        ),
+                        React.createElement('button', {onClick: () => navigate('settings'), className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30 flex items-center'}, React.createElement(Lucide.Settings, {size:20, className: 'mr-2 text-secondary-teal-light'}), "Configuración"),
+                        React.createElement('button', {onClick: () => alert("Ir a mi Lista de Deseos"), className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30 flex items-center'}, React.createElement(Lucide.Heart, {size:20, className: 'mr-2 text-secondary-teal-light'}), "Lista de Deseos"),
+                        React.createElement('button', {onClick: () => alert("Ir a Ayuda & Soporte"), className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30 flex items-center'}, React.createElement(Lucide.HelpCircle, {size:20, className: 'mr-2 text-secondary-teal-light'}), "Ayuda & Soporte"),
+                        React.createElement('button', {onClick: () => alert("Logged out"), className: 'w-full p-3 mt-4 bg-error-red/10 text-error-red rounded-lg shadow-card text-left hover:bg-error-red/20 flex items-center'}, React.createElement(Lucide.LogOut, {size:20, className: 'mr-2'}), "Logout")
+                    )
+                )
+            );
+        };
+        
+        const SettingsScreen = ({ navigate }) => {
+            return (
+                React.createElement('div', { className: 'pb-4' },
+                    React.createElement('div', {className: 'px-4 space-y-3'},
+                        React.createElement('h3', {className: 'text-lg font-semibold text-primary-deep-teal mb-1'}, "Cuenta"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Editar Perfil"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Cambiar Password"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Metodos de Pago"),
+                        
+                        React.createElement('h3', {className: 'text-lg font-semibold text-primary-deep-teal mb-1 mt-4'}, "Preferencias"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Notificaciones"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Idioma"),
+
+                        React.createElement('h3', {className: 'text-lg font-semibold text-primary-deep-teal mb-1 mt-4'}, "Legal"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Politica de Privacidad"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Terminos de Servicio"),
+                        React.createElement('button', {className: 'w-full p-3 bg-background-content rounded-lg shadow-card text-left text-neutral-dark-gray hover:bg-secondary-teal-pale/30'}, "Acerca de  GoingLikeLocals")
+                    )
+                )
+            );
+        };
+
+
+        // --- Main App Component ---
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [pageParams, setPageParams] = useState({});
+            const [pageHistory, setPageHistory] = useState([{ page: 'home', params: {} }]);
+            const [currentBooking, setCurrentBooking] = useState(null); // { experienceId, step, date, guests }
+
+            const navigate = (page, params = {}) => {
+                setPageHistory(prev => [...prev, { page, params }]);
+                setCurrentPage(page);
+                setPageParams(params);
+                // Scroll to top of new screen
+                const screenContent = document.querySelector('.screen-content');
+                if (screenContent) screenContent.scrollTop = 0;
+            };
+
+            const goBack = () => {
+                if (pageHistory.length > 1) {
+                    const newHistory = pageHistory.slice(0, -1);
+                    const previousPage = newHistory[newHistory.length - 1];
+                    setPageHistory(newHistory);
+                    setCurrentPage(previousPage.page);
+                    setPageParams(previousPage.params);
+                }
+            };
+            
+            const appContextValue = {
+                experiences: initialExperiences,
+                navigate,
+                currentBooking,
+                setCurrentBooking
+            };
+
+            const renderPage = () => {
+                switch (currentPage) {
+                    case 'home': return React.createElement(HomeScreen, { navigate });
+                    case 'category': return React.createElement(CategoryScreen, { navigate, params: pageParams });
+                    case 'search': return React.createElement(SearchScreen, { navigate });
+                    case 'experienceDetail': return React.createElement(ExperienceDetailScreen, { navigate, params: pageParams });
+                    case 'booking': return React.createElement(BookingScreen, { navigate });
+                    case 'bookings': return React.createElement(BookingsScreen, { navigate });
+                    case 'chatlist': return React.createElement(ChatListScreen, { navigate });
+                    case 'chat': return React.createElement(ChatScreen, { navigate, params: pageParams });
+                    case 'profile': return React.createElement(ProfileScreen, { navigate });
+                    case 'hostProfile': return React.createElement(HostProfileScreen, { navigate, params: pageParams });
+                    case 'settings': return React.createElement(SettingsScreen, { navigate });
+                    default: return React.createElement(HomeScreen, { navigate });
+                }
+            };
+
+            const pageTitles = {
+                home: "Discover",
+                category: pageParams.categoryName || "Categoria",
+                search: "Buscar Experiencias",
+                experienceDetail: "Detalles de Experiencia",
+                booking: "Agendar Experiencia",
+                bookings: "Mis Reservas",
+                chatlist: "Mensajes",
+                chat: pageParams.chatName || "Chat",
+                profile: "Mi Perfil",
+                hostProfile: pageParams.hostName || "Perfil Anfitrión",
+                settings: "Configuración",
+            };
+            
+            const showHeader = !['home'].includes(currentPage); // Only hide header on home
+            const showBottomNav = ['home', 'search', 'bookings', 'chatlist', 'profile'].includes(currentPage);
+
+            return (
+                React.createElement(AppContext.Provider, { value: appContextValue },
+                    React.createElement('div', { className: 'iphone-frame' },
+                        React.createElement('div', { className: 'iphone-notch-container' }),
+                        React.createElement('div', { className: 'iphone-screen' },
+                            showHeader && React.createElement(Header, { title: pageTitles[currentPage] || "Going Like Locals", onBack: (pageHistory.length > 1 && currentPage !== 'home') ? goBack : null }),
+                            React.createElement('main', { className: `screen-content ${!showHeader ? 'pt-10' : ''} ${!showBottomNav ? 'pb-4' : ''}` }, // Adjust padding based on header/nav presence
+                                renderPage()
+                            ),
+                            showBottomNav && React.createElement(BottomNav, { activePage: currentPage, navigate: navigate })
+                        )
+                    )
+                )
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
+    </script>
+</body>
+</html>
